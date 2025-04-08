@@ -345,3 +345,8 @@ def send_sms():
 
 if __name__ == '__main__':
     app.run(debug=True)
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin https://github.com/ditt-användarnamn/mass-sms-flask.git
+git push -u origin main
