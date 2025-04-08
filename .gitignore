@@ -282,3 +282,23 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+from twilio.rest import Client
+
+# Your Account SID and Auth Token from twilio.com/console
+account_sid = 'your_account_sid'
+auth_token = 'your_auth_token'
+client = Client(account_sid, auth_token)
+
+def send_bulk_sms(message, phone_numbers):
+    for number in phone_numbers:
+        message = client.messages.create(
+            body=message,
+            from_='+your_twilio_number',
+            to=number
+        )
+        print(f"Message sent to {number}: {message.sid}")
+
+if __name__ == "__main__":
+    message = "Your message here"
+    phone_numbers = ["+46730576897", "+46763203756"]  # List of Swedish numbers
+    send_bulk_sms(message, phone_numbers)
