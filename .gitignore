@@ -302,3 +302,46 @@ if __name__ == "__main__":
     message = "Your message here"
     phone_numbers = ["+46730576897", "+46763203756"]  # List of Swedish numbers
     send_bulk_sms(message, phone_numbers)
+from flask import Flask, request, render_template
+import csv
+from twilio.rest import Client
+import os
+
+app = Flask(__name__)
+
+# Hämta Twilio-uppgifter från miljövariabler
+TWILIO_SID = os.environ.get("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
+TWILIO_PHONE = os.environ.get("TWILIO_PHONE_NUMBER")
+
+client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN)
+
+@app.route('/')
+def upload_form():
+    return render_template('upload.html')
+
+@app.route('/send_sms', methods=['POST'])
+def send_sms():
+    file = request.files['file']
+    message_body = request.form['message']
+
+    if not file or not message_body:
+        return "Fel: Saknar fil eller meddelande.", 400
+
+    csv_file = file.stream.read().decode("utf-8").splitlines()
+    reader = csv.reader(csv_file)
+    for row in reader:
+        phone_number = row[0]
+        try:
+            message = client.messages.create(
+                body=message_body,
+                from_=TWILIO_PHONE,
+                to=phone_number
+            )
+        except Exception as e:
+            print(f"Kunde inte skicka till {phone_number}: {str(e)}")
+
+    return "SMS har skickats!"
+
+if __name__ == '__main__':
+    app.run(debug=True)
