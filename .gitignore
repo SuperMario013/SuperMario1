@@ -350,3 +350,5 @@ git add .
 git commit -m "Initial commit"
 git remote add origin https://github.com/ditt-användarnamn/mass-sms-flask.git
 git push -u origin main
+pip install -r requirements.txt
+python app.py
